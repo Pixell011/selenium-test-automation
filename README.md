@@ -38,6 +38,20 @@ Use:
 
 `Python: Select Interpreter` -> `.venv\Scripts\python.exe`
 
+## Test Reports
+
+Running:
+
+`python -m pytest`
+
+generates an HTML report at:
+
+`reports/report.html`
+
+and stores screenshots for failed tests in:
+
+`reports/screenshots/`
+
 ## Notes
 
 - ChromeDriver is managed automatically by Selenium Manager.

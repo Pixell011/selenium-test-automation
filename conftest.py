@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import datetime
 
 import pytest
 from selenium import webdriver
@@ -21,3 +22,25 @@ def driver():
     driver = webdriver.Chrome(options=options)
     yield driver
     driver.quit()
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+
+    if report.when != "call" or report.passed:
+        return
+
+    driver_instance = item.funcargs.get("driver")
+    if driver_instance is None:
+        return
+
+    screenshots_dir = Path(__file__).resolve().parent / "reports" / "screenshots"
+    screenshots_dir.mkdir(parents=True, exist_ok=True)
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    screenshot_name = f"{item.name}_{timestamp}.png"
+    screenshot_path = screenshots_dir / screenshot_name
+
+    driver_instance.save_screenshot(str(screenshot_path))

@@ -6,4 +6,4 @@ def test_login(driver):
     page.open()
     page.login("tomsmith", "SuperSecretPassword!")
 
-    assert "You logged into a secure area!" in page.get_message()
+    assert "erro proposital" in page.get_message()
