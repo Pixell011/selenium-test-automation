@@ -13,15 +13,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Install Python 3.11 for a stable and reproducible test runtime.
+      # Install Python for a stable and reproducible test runtime.
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # Install Google Chrome on the runner for Selenium browser execution.
-      - name: Setup Chrome
-        uses: browser-actions/setup-chrome@v1
+      # Install Google Chrome Stable on Ubuntu runner for Selenium execution.
+      - name: Install Google Chrome Stable
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget gnupg
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/googlechrome-linux-keyring.gpg
+          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/googlechrome-linux-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          google-chrome --version
 
       # Upgrade pip before installing project dependencies.
       - name: Upgrade pip
@@ -31,7 +38,21 @@ jobs:
       - name: Install requirements
         run: pip install -r requirements.txt
 
+      # Ensure report folders exist before tests generate html and screenshots.
+      - name: Create report directories
+        run: mkdir -p reports/screenshots
+
       # Run the test suite in headless mode (configured in conftest.py).
       # pytest.ini will also generate the HTML report under reports/report.html.
       - name: Run pytest
         run: python -m pytest -q
+
+      # Upload report files even if tests fail, so results are always available.
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report-and-screenshots
+          path: |
+            reports/report.html
+            reports/screenshots/
