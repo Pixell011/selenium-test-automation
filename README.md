@@ -1,23 +1,45 @@
 # selenium-test-automation
 
-This is a Selenium test automation framework using Python.
+QA automation framework with Selenium + Pytest using Page Object Model.
 
-## Project Structure
+## Project structure
 
-- `tests/`: Contains test cases
-- `pages/`: Page Object Model classes
-- `drivers/`: WebDriver executables
-- `utils/`: Utility functions and helpers
-- `.gitignore`: Git ignore file
-- `README.md`: This file
+- `pages/`: page objects
+- `tests/`: test cases
+- `utils/`: shared utilities
+- `conftest.py`: shared pytest fixtures
+- `scripts/setup_windows.ps1`: one-command Windows setup
 
-## Setup
+## Quick setup (Windows)
 
-1. Install Python 3.x
-2. Install dependencies: `pip install selenium`
-3. Download WebDriver executables and place in `drivers/` folder
-4. Run tests: `python -m pytest tests/`
+1. Open PowerShell in the project root.
+2. Create virtual environment:
+   `py -m venv .venv`
+3. Activate virtual environment:
+   `.\.venv\Scripts\Activate.ps1`
+4. Upgrade pip:
+   `python -m pip install --upgrade pip`
+5. Install dependencies:
+   `pip install -r requirements.txt`
+6. Run tests:
+   `python -m pytest -q`
 
-## Usage
+## One-command setup (Windows)
 
-Add your test cases in the `tests/` directory, page objects in `pages/`, and utilities in `utils/`.
+Run:
+
+`powershell -ExecutionPolicy Bypass -File .\scripts\setup_windows.ps1`
+
+This script recreates `.venv`, installs dependencies, and runs `python -m pytest -q`.
+
+## VSCode interpreter
+
+Use:
+
+`Python: Select Interpreter` -> `.venv\Scripts\python.exe`
+
+## Notes
+
+- ChromeDriver is managed automatically by Selenium Manager.
+- No `webdriver-manager` dependency is required.
+- In OneDrive folders, physical deletion of `.venv` or `.pytest_cache` may fail due to file locks/permissions. They are ignored by git and should not be committed.
